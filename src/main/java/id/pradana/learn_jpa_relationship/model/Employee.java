@@ -39,6 +39,7 @@ public class Employee {
   @Temporal(TemporalType.DATE)
   private Date birthDate;
 
+  /* Custom Formula */
   @Formula("CONCAT(first_name, ' ', last_name)")
   private String fullname;
 

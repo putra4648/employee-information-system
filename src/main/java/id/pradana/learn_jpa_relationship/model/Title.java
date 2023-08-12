@@ -11,6 +11,7 @@ import java.util.Date;
 @Table(name = "titles")
 @Entity
 public class Title {
+  /* Composite Keys */
   @EmbeddedId
   private TitlePk titlePk;
 
