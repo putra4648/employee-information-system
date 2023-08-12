@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/api/v1")
@@ -15,8 +16,11 @@ public class EmployeeController {
   private EmployeeService service;
 
   @GetMapping("/")
-  public ResponseEntity<?> getAllEmployee(@RequestParam(name = "page", defaultValue = "1") int page,
+  @ResponseBody
+  public ResponseEntity<?> getAllEmployee(
+      @RequestParam(name = "sortBy", defaultValue = "firstname") String sortBy,
+      @RequestParam(name = "page", defaultValue = "1") int page,
       @RequestParam(name = "size", defaultValue = "100") int size) {
-    return service.getAll(page, size);
+    return service.getAll(sortBy, page, size);
   }
 }

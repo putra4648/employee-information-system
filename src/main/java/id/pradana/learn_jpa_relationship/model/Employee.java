@@ -1,14 +1,18 @@
 package id.pradana.learn_jpa_relationship.model;
 
-import id.pradana.learn_jpa_relationship.converter.GenderConverter;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "employees")
@@ -33,6 +37,11 @@ public class Employee {
   @Column(name = "birth_date", nullable = false)
   @Temporal(TemporalType.DATE)
   private Date birthDate;
+
+  @OneToMany(cascade = CascadeType.ALL)
+  @JoinColumns({ @JoinColumn(name = "emp_no"), })
+  @OrderBy(value = "from_date")
+  private List<Title> titles;
 
   public Integer getId() {
     return id;
@@ -80,5 +89,13 @@ public class Employee {
 
   public void setBirthDate(Date birthDate) {
     this.birthDate = birthDate;
+  }
+
+  public List<Title> getTitles() {
+    return titles;
+  }
+
+  public void setTitles(List<Title> titles) {
+    this.titles = titles;
   }
 }

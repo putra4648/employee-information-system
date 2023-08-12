@@ -1,6 +1,7 @@
 package id.pradana.learn_jpa_relationship.dto;
 
 import java.util.Date;
+import java.util.List;
 
 public class EmployeeDto {
   private Long id;
@@ -8,6 +9,7 @@ public class EmployeeDto {
   private String lastname;
   private Date birthdate;
   private Date hiredate;
+  private List<TitleDto> titleDtos;
 
   public Long getId() {
     return id;
@@ -47,5 +49,13 @@ public class EmployeeDto {
 
   public void setHiredate(Date hiredate) {
     this.hiredate = hiredate;
+  }
+
+  public List<TitleDto> getTitleDtos() {
+    return titleDtos;
+  }
+
+  public void setTitleDtos(List<TitleDto> titleDtos) {
+    this.titleDtos = titleDtos;
   }
 }

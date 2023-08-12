@@ -1,6 +1,7 @@
 package id.pradana.learn_jpa_relationship.service;
 
 import id.pradana.learn_jpa_relationship.dto.EmployeeDto;
+import id.pradana.learn_jpa_relationship.dto.TitleDto;
 import id.pradana.learn_jpa_relationship.model.Employee;
 import id.pradana.learn_jpa_relationship.repository.EmployeeRepository;
 import java.util.ArrayList;
@@ -15,6 +16,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -24,20 +26,33 @@ public class EmployeeService {
   @Autowired
   private EmployeeRepository repository;
 
-  public ResponseEntity<?> getAll(int page, int size) {
+  public ResponseEntity<?> getAll(String sortBy, int page, int size) {
     Map<String, Object> response;
     try {
       // Pagination
-      Pageable paging = PageRequest.of(page, size);
+      Pageable paging = PageRequest.of(page, size, Sort.by(sortBy));
       Page<EmployeeDto> pageEmployee = repository.findAll(paging).map(new Function<Employee, EmployeeDto>() {
         @Override
         public EmployeeDto apply(Employee e) {
           EmployeeDto dto = new EmployeeDto();
+          List<TitleDto> titleDtos = e.getTitles()
+              .stream()
+              .map(d -> {
+                TitleDto titleDto = new TitleDto();
+                titleDto.setEmployeeNo(d.getTitlePk().getEmployeeNo());
+                titleDto.setTitle(d.getTitlePk().getTitle());
+                titleDto.setFromDate(d.getTitlePk().getFromDate());
+                titleDto.setToDate(d.getToDate());
+                return titleDto;
+              })
+              .toList();
+
           dto.setId(e.getId().longValue());
           dto.setFirstname(e.getFirstname());
           dto.setLastname(e.getLastname());
           dto.setBirthdate(e.getBirthDate());
           dto.setHiredate(e.getHireDate());
+          dto.setTitleDtos(titleDtos);
           return dto;
         }
       });
@@ -54,7 +69,7 @@ public class EmployeeService {
     } catch (Exception e) {
       response = new HashMap<>();
       response.put("statusCode", HttpStatus.INTERNAL_SERVER_ERROR.value());
-      response.put("errorMessage", e.getMessage());
+      response.put("errorMessage", e.toString());
       return new ResponseEntity<>(new TreeMap<>(response),
           HttpStatus.INTERNAL_SERVER_ERROR);
     }
