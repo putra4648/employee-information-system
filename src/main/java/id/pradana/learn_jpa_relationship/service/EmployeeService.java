@@ -7,6 +7,7 @@ import id.pradana.learn_jpa_relationship.repository.EmployeeRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,48 @@ public class EmployeeService {
       response.put("errorMessage", e.toString());
       return new ResponseEntity<>(new TreeMap<>(response),
           HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  public ResponseEntity<?> getEmployeeById(Integer id) {
+    Optional<Employee> emp = repository.findById(id);
+    Map<String, Object> response;
+
+    if (emp.isPresent()) {
+      response = new HashMap<>();
+      Employee ep = emp.get();
+
+      EmployeeDto dto = new EmployeeDto();
+
+      dto.setId(ep.getId().longValue());
+      dto.setFirstname(ep.getFirstname());
+      dto.setLastname(ep.getLastname());
+      dto.setFullname(ep.getFullname());
+      dto.setHiredate(ep.getHireDate());
+      dto.setBirthdate(ep.getBirthDate());
+
+      List<TitleDto> titleDtos = ep.getTitles()
+          .stream()
+          .map(d -> {
+            TitleDto titleDto = new TitleDto();
+            titleDto.setEmployeeNo(d.getTitlePk().getEmployeeNo());
+            titleDto.setTitle(d.getTitlePk().getTitle());
+            titleDto.setFromDate(d.getTitlePk().getFromDate());
+            titleDto.setToDate(d.getToDate());
+            return titleDto;
+          })
+          .toList();
+
+      dto.setTitleDtos(titleDtos);
+
+      response.put("errorMessage", null);
+      response.put("data", dto);
+      return new ResponseEntity<>(new TreeMap<>(response), HttpStatus.OK);
+    } else {
+      response = new HashMap<>();
+      response.put("errorMessage", "No Employee available with id " + id);
+      response.put("data", null);
+      return new ResponseEntity<>(new TreeMap<>(response), HttpStatus.OK);
     }
   }
 }
