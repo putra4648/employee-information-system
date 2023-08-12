@@ -20,7 +20,7 @@ public class EmployeeController {
   public ResponseEntity<?> getAllEmployee(
       @RequestParam(name = "sortBy", defaultValue = "firstname") String sortBy,
       @RequestParam(name = "page", defaultValue = "1") int page,
-      @RequestParam(name = "size", defaultValue = "100") int size) {
+      @RequestParam(name = "size", defaultValue = "25") int size) {
     return service.getAll(sortBy, page, size);
   }
 }

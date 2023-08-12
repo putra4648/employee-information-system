@@ -4,15 +4,12 @@ import id.pradana.learn_jpa_relationship.dto.EmployeeDto;
 import id.pradana.learn_jpa_relationship.dto.TitleDto;
 import id.pradana.learn_jpa_relationship.model.Employee;
 import id.pradana.learn_jpa_relationship.repository.EmployeeRepository;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,7 +57,6 @@ public class EmployeeService {
       response = new HashMap<>();
       response.put("errorMessage", null);
       response.put("data", pageEmployee.getContent());
-      response.put("statusCode", HttpStatus.OK.value());
       response.put("page", pageEmployee.getNumber());
       response.put("totalItems", pageEmployee.getTotalElements());
 
@@ -68,7 +64,6 @@ public class EmployeeService {
 
     } catch (Exception e) {
       response = new HashMap<>();
-      response.put("statusCode", HttpStatus.INTERNAL_SERVER_ERROR.value());
       response.put("errorMessage", e.toString());
       return new ResponseEntity<>(new TreeMap<>(response),
           HttpStatus.INTERNAL_SERVER_ERROR);

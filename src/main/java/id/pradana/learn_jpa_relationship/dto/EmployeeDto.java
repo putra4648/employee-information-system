@@ -1,5 +1,6 @@
 package id.pradana.learn_jpa_relationship.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ public class EmployeeDto {
   private String lastname;
   private Date birthdate;
   private Date hiredate;
+  @JsonProperty(value = "titles")
   private List<TitleDto> titleDtos;
 
   public Long getId() {
