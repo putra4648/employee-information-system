@@ -15,7 +15,7 @@ public class EmployeeController {
   @Autowired
   private EmployeeService service;
 
-  @GetMapping("/")
+  @GetMapping("/employees")
   @ResponseBody
   public ResponseEntity<?> getAllEmployee(
       @RequestParam(name = "sortBy", defaultValue = "firstname") String sortBy,

@@ -47,6 +47,7 @@ public class EmployeeService {
           dto.setId(e.getId().longValue());
           dto.setFirstname(e.getFirstname());
           dto.setLastname(e.getLastname());
+          dto.setFullname(e.getFullname());
           dto.setBirthdate(e.getBirthDate());
           dto.setHiredate(e.getHireDate());
           dto.setTitleDtos(titleDtos);
@@ -57,6 +58,7 @@ public class EmployeeService {
       response = new HashMap<>();
       response.put("errorMessage", null);
       response.put("data", pageEmployee.getContent());
+      response.put("limit", pageEmployee.getSize());
       response.put("page", pageEmployee.getNumber());
       response.put("totalItems", pageEmployee.getTotalElements());
 

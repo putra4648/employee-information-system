@@ -8,6 +8,7 @@ public class EmployeeDto {
   private Long id;
   private String firstname;
   private String lastname;
+  private String fullname;
   private Date birthdate;
   private Date hiredate;
   @JsonProperty(value = "titles")
@@ -59,5 +60,13 @@ public class EmployeeDto {
 
   public void setTitleDtos(List<TitleDto> titleDtos) {
     this.titleDtos = titleDtos;
+  }
+
+  public String getFullname() {
+    return fullname;
+  }
+
+  public void setFullname(String fullname) {
+    this.fullname = fullname;
   }
 }

@@ -13,6 +13,7 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.util.Date;
 import java.util.List;
+import org.hibernate.annotations.Formula;
 
 @Entity
 @Table(name = "employees")
@@ -37,6 +38,9 @@ public class Employee {
   @Column(name = "birth_date", nullable = false)
   @Temporal(TemporalType.DATE)
   private Date birthDate;
+
+  @Formula("CONCAT(first_name, ' ', last_name)")
+  private String fullname;
 
   @OneToMany(cascade = CascadeType.ALL)
   @JoinColumns({ @JoinColumn(name = "emp_no"), })
@@ -97,5 +101,13 @@ public class Employee {
 
   public void setTitles(List<Title> titles) {
     this.titles = titles;
+  }
+
+  public String getFullname() {
+    return fullname;
+  }
+
+  public void setFullname(String fullname) {
+    this.fullname = fullname;
   }
 }
