@@ -1,0 +1,22 @@
+package id.pradana.learn_jpa_relationship.controller;
+
+import id.pradana.learn_jpa_relationship.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+@Controller
+@RequestMapping("/api/v1")
+public class EmployeeController {
+  @Autowired
+  private EmployeeService service;
+
+  @GetMapping("/")
+  public ResponseEntity<?> getAllEmployee(@RequestParam(name = "page", defaultValue = "1") int page,
+      @RequestParam(name = "size", defaultValue = "100") int size) {
+    return service.getAll(page, size);
+  }
+}
