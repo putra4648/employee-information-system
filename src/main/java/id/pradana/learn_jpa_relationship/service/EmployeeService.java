@@ -11,6 +11,8 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,44 +26,50 @@ public class EmployeeService {
   @Autowired
   private EmployeeRepository repository;
 
-  public ResponseEntity<?> getAll(String sortBy, int page, int size) {
+  public ResponseEntity<?> getAll(String fullname, String sortBy, int page,
+      int size) {
     Map<String, Object> response;
     try {
       // Pagination
       Pageable paging = PageRequest.of(page, size, Sort.by(sortBy));
-      Page<EmployeeDto> pageEmployee = repository.findAll(paging).map(new Function<Employee, EmployeeDto>() {
-        @Override
-        public EmployeeDto apply(Employee e) {
-          EmployeeDto dto = new EmployeeDto();
-          List<TitleDto> titleDtos = e.getTitles()
-              .stream()
-              .map(d -> {
-                TitleDto titleDto = new TitleDto();
-                titleDto.setEmployeeNo(d.getTitlePk().getEmployeeNo());
-                titleDto.setTitle(d.getTitlePk().getTitle());
-                titleDto.setFromDate(d.getTitlePk().getFromDate());
-                titleDto.setToDate(d.getToDate());
-                return titleDto;
-              })
-              .toList();
+      ExampleMatcher customMatcher = ExampleMatcher.matchingAny().withMatcher(
+          "fullname",
+          ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+      Example<Employee> example = Example.of(Employee.from(null, fullname, null, null), customMatcher);
+      Page<EmployeeDto> pageEmployee = repository.findAll(example, paging)
+          .map(new Function<Employee, EmployeeDto>() {
+            @Override
+            public EmployeeDto apply(Employee e) {
+              EmployeeDto dto = new EmployeeDto();
+              List<TitleDto> titleDtos = e.getTitles()
+                  .stream()
+                  .map(d -> {
+                    TitleDto titleDto = new TitleDto();
+                    titleDto.setEmployeeNo(
+                        d.getTitlePk().getEmployeeNo());
+                    titleDto.setTitle(d.getTitlePk().getTitle());
+                    titleDto.setFromDate(d.getTitlePk().getFromDate());
+                    titleDto.setToDate(d.getToDate());
+                    return titleDto;
+                  })
+                  .toList();
 
-          dto.setId(e.getId().longValue());
-          dto.setFirstname(e.getFirstname());
-          dto.setLastname(e.getLastname());
-          dto.setFullname(e.getFullname());
-          dto.setBirthdate(e.getBirthDate());
-          dto.setHiredate(e.getHireDate());
-          dto.setTitleDtos(titleDtos);
-          return dto;
-        }
-      });
+              dto.setId(e.getId().longValue());
+              dto.setFirstname(e.getFirstname());
+              dto.setLastname(e.getLastname());
+              dto.setFullname(e.getFullname());
+              dto.setBirthdate(e.getBirthDate());
+              dto.setHiredate(e.getHireDate());
+              dto.setTitleDtos(titleDtos);
+              return dto;
+            }
+          });
 
       response = new HashMap<>();
-      response.put("errorMessage", null);
       response.put("data", pageEmployee.getContent());
-      response.put("limit", pageEmployee.getSize());
-      response.put("page", pageEmployee.getNumber());
-      response.put("totalItems", pageEmployee.getTotalElements());
+      response.put("currentPage", pageEmployee.getNumber());
+      response.put("recordsTotal", pageEmployee.getTotalElements());
+      response.put("recordsFiltered", pageEmployee.getTotalPages());
 
       return ResponseEntity.ok().body(new TreeMap<>(response));
 

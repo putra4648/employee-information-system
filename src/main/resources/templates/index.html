@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th='www.thymeleaf.org'>
+
+<head>
+  <title>Employee System</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+  <link th:rel="stylesheet" th:href="@{/webjars/font-awesome/css/all.min.css}" />
+
+  <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+  <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+
+  <!-- Datatables -->
+  <link th:rel="stylesheet" th:href="@{/webjars/datatables/css/jquery.dataTables.css}">
+  <script th:src="@{/webjars/datatables/js/jquery.dataTables.js}"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="border my-2 p-3">
+      <div id="searchForm" class="row gap-2 ">
+        <div class="collapse" id="searchCollapse">
+          <div class="row">
+            <div class="col">
+              <label for="employee_id" class="form-label">ID</label>
+              <input type="text" name="employee_id" class="form-control">
+            </div>
+            <div class="col">
+              <label for="employee_fullname" class="form-label">Fullname</label>
+              <input type="text" name="employee_fullname" class="form-control">
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <label for="employee_birthdate" class="form-label">Birthday Date</label>
+              <input type="date" name="employee_birthdate" class="form-control">
+            </div>
+            <div class="col">
+              <label for="employee_hiredate" class="form-label">Hire Date</label>
+              <input type="date" name="employee_hiredate" class="form-control">
+            </div>
+          </div>
+        </div>
+        <div class="row align-items-center">
+          <div class="col-11">
+            <button id="searchBtn" type="submit" class="btn btn-primary">Search</button>
+            <button id='resetBtn' type="reset" class="btn btn-danger">Reset</button>
+          </div>
+          <div class="col">
+            <button type="button" class="btn btn-lg" id="collapseBtn" onclick="showCollapse()">
+              <span>
+                <i class="fa-solid fa-arrow-down"></i>
+              </span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <table id="employeeTable" class="display">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Fullname</th>
+          <th>Birthday Date</th>
+          <th>Hire Date</th>
+        </tr>
+      </thead>
+    </table>
+
+  </div>
+  <script>
+    let EmployeeTable;
+
+
+    $(document).ready(function () {
+      console.log("Ready")
+      $(document).find("input").val('')
+      EmployeeTable = new DataTable("#employeeTable", {
+        responsive: true,
+        ajax: {
+          url: '/api/v1/employees',
+          method: "POST",
+          data: function (params) {
+            var data = {
+              page: params.start,
+              size: params.length,
+              employee_fullname: $("input[name='employee_fullname']").val()
+            }
+            console.log(params)
+            return data;
+          },
+          dataSrc: function (json) {
+            return json.data
+          }
+        },
+        processing: true,
+        serverSide: true,
+        paging: true,
+        searching: false,
+        columns: [
+          {
+            data: "id",
+          },
+          {
+            data: 'fullname'
+          },
+          {
+            data: "birthdate"
+          },
+          {
+            data: 'hiredate'
+          }
+        ],
+        dom: "<'float-end'l>" + 'rtip'
+      })
+
+
+    })
+
+    const searchCollapse = new bootstrap.Collapse("#searchCollapse", {
+      toggle: false
+    })
+
+
+    function showCollapse() {
+      searchCollapse.show()
+    }
+
+    $("#searchCollapse").on("shown.bs.collapse", function () {
+      $("#collapseBtn").find("span").html(`<i class='fa-solid fa-arrow-up'></i>`)
+      $("#collapseBtn").click(function () {
+        searchCollapse.hide();
+      })
+    })
+
+    $("#searchCollapse").on("hidden.bs.collapse", function () {
+      $("#collapseBtn").find("span").html(`<i class='fa-solid fa-arrow-down'></i>`)
+      $("#collapseBtn").click(function () {
+        searchCollapse.show();
+      })
+    })
+
+    $("#searchBtn").on('click', function () {
+      EmployeeTable.ajax.reload()
+    })
+
+    $("#resetBtn").on('click', function () {
+      $("#searchForm").find('input').val("");
+      EmployeeTable.ajax.reload();
+    })
+
+  </script>
+  <script type="text/javascript" th:src="@{/js/index.js}"></script>
+</body>
+
+</html>

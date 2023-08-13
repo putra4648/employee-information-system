@@ -14,6 +14,22 @@ public class EmployeeDto {
   @JsonProperty(value = "titles")
   private List<TitleDto> titleDtos;
 
+  public static EmployeeDto from(String id, String fullname, Date birthDate,
+      Date hiredate) {
+    return new EmployeeDto(id, fullname, birthDate, hiredate);
+  }
+
+  public EmployeeDto() {
+  };
+
+  private EmployeeDto(String id, String fullname, Date birthdate,
+      Date hiredate) {
+    this.id = new Long(id);
+    this.fullname = fullname;
+    this.birthdate = birthdate;
+    this.hiredate = hiredate;
+  }
+
   public Long getId() {
     return id;
   }

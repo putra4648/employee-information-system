@@ -15,5 +15,8 @@ To know `Database Relationship` go there :  <https://www.metabase.com/learn/data
 
 ## TODO
 
-- [ ] Bootstrap 5
-- [ ] jQuery
+- [x] Bootstrap 5
+- [x] jQuery
+- [x] Font Awesome
+- [ ] Filter by search
+- [ ] Sort filter ASC/DESC
