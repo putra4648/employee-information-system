@@ -8,8 +8,8 @@ To know `Database Relationship` go there :  <https://www.metabase.com/learn/data
 
 ## Feature
 
-- [x] One-To-Many Relationship Uni / Bi
-- [ ] Many-To-One Relationship Uni / Bi
+- [x] One-To-Many Relationship
+- [ ] Many-To-One Relationship
 - [ ] One-To-One Relationship
 - [ ] Many-To-Many Relationship
 
