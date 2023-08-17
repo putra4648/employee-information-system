@@ -9,7 +9,6 @@ To know `Database Relationship` go there :  <https://www.metabase.com/learn/data
 ## Feature
 
 - [x] One-To-Many Relationship
-- [ ] Many-To-One Relationship
 - [ ] One-To-One Relationship
 - [ ] Many-To-Many Relationship
 
@@ -18,5 +17,6 @@ To know `Database Relationship` go there :  <https://www.metabase.com/learn/data
 - [x] Bootstrap 5
 - [x] jQuery
 - [x] Font Awesome
+- [x] Momentjs
 - [ ] Filter by search
-- [ ] Sort filter ASC/DESC
+- [x] Sort filter ASC/DESC Employee form
