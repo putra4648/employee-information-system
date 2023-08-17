@@ -18,5 +18,5 @@ To know `Database Relationship` go there :  <https://www.metabase.com/learn/data
 - [x] jQuery
 - [x] Font Awesome
 - [x] Momentjs
-- [ ] Filter by search
+- [x] Filter by search Employee not full yet (Employee)
 - [x] Sort filter ASC/DESC Employee form
