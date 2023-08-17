@@ -20,7 +20,7 @@ import org.hibernate.annotations.Formula;
 public class Employee {
   @Id
   @Column(name = "emp_no", nullable = false, length = 11)
-  private Integer id;
+  private Long id;
 
   @Column(name = "first_name", nullable = false, length = 14)
   private String firstname;
@@ -48,11 +48,11 @@ public class Employee {
   @OrderBy(value = "from_date")
   private List<Title> titles;
 
-  public Integer getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(Integer id) {
+  public void setId(Long id) {
     this.id = id;
   }
 

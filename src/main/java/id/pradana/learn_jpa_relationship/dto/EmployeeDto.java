@@ -1,7 +1,6 @@
 package id.pradana.learn_jpa_relationship.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.Instant;
 import java.util.List;
 
 public class EmployeeDto {

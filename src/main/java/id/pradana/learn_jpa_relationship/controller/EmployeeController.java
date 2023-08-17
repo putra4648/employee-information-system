@@ -29,7 +29,7 @@ public class EmployeeController {
 
   @GetMapping("/employees/{id}")
   @ResponseBody
-  public ResponseEntity<?> getEmployeeById(@PathVariable("id") int id) {
+  public ResponseEntity<?> getEmployeeById(@PathVariable("id") long id) {
     return service.getEmployeeById(id);
   }
 }

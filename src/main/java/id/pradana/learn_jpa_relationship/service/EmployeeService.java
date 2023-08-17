@@ -4,13 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import id.pradana.learn_jpa_relationship.dto.EmployeeDto;
 import id.pradana.learn_jpa_relationship.dto.TitleDto;
 import id.pradana.learn_jpa_relationship.filter.EmployeeFilter;
+import id.pradana.learn_jpa_relationship.filter.EmployeeSpecFilter;
 import id.pradana.learn_jpa_relationship.model.Employee;
 import id.pradana.learn_jpa_relationship.repository.EmployeeRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,11 +52,11 @@ public class EmployeeService {
         logger.log(Level.INFO, "Filter {0}", filter);
 
         if (filter.getId() != null) {
-          specFilter = filterById(filter.getId());
+          specFilter = EmployeeSpecFilter.filterById(filter.getId());
         } else if (filter.getFullname() != null) {
-          specFilter = filterByFullname(filter.getFullname());
+          specFilter = EmployeeSpecFilter.filterByFullname(filter.getFullname());
         } else if (filter.getBirthdate() != null) {
-          specFilter = filterByBirthdate(filter.getBirthdate());
+          specFilter = EmployeeSpecFilter.filterByBirthdate(filter.getBirthdate());
         }
       }
 
@@ -94,9 +90,9 @@ public class EmployeeService {
                 .stream()
                 .map(d -> {
                   TitleDto titleDto = new TitleDto();
-                  titleDto.setEmployeeNo(d.getTitlePk().getEmployeeNo());
-                  titleDto.setTitle(d.getTitlePk().getTitle());
-                  titleDto.setFromDate(d.getTitlePk().getFromDate());
+                  titleDto.setEmployeeNo(d.getEmployeeNo());
+                  titleDto.setTitle(d.getTitle());
+                  titleDto.setFromDate(d.getFromDate());
                   titleDto.setToDate(d.getToDate());
                   return titleDto;
                 })
@@ -114,7 +110,7 @@ public class EmployeeService {
         });
   }
 
-  public ResponseEntity<?> getEmployeeById(Integer id) {
+  public ResponseEntity<?> getEmployeeById(Long id) {
     Optional<Employee> emp = repository.findById(id);
     Map<String, Object> response;
     try {
@@ -135,9 +131,9 @@ public class EmployeeService {
             .stream()
             .map(d -> {
               TitleDto titleDto = new TitleDto();
-              titleDto.setEmployeeNo(d.getTitlePk().getEmployeeNo());
-              titleDto.setTitle(d.getTitlePk().getTitle());
-              titleDto.setFromDate(d.getTitlePk().getFromDate());
+              titleDto.setEmployeeNo(d.getEmployeeNo());
+              titleDto.setTitle(d.getTitle());
+              titleDto.setFromDate(d.getFromDate());
               titleDto.setToDate(d.getToDate());
               return titleDto;
             })
@@ -161,36 +157,5 @@ public class EmployeeService {
       return new ResponseEntity<>(new TreeMap<>(response),
           HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-
-  public static Specification<Employee> filterByFullname(String fullname) {
-    return new Specification<Employee>() {
-      @Override
-      public Predicate toPredicate(Root<Employee> root, CriteriaQuery<?> rc,
-          CriteriaBuilder cb) {
-        return cb.like(root.get("fullname"), "%" + fullname + "%");
-      }
-    };
-  }
-
-  public static Specification<Employee> filterById(String id) {
-    return new Specification<Employee>() {
-      @Override
-      public Predicate toPredicate(Root<Employee> root, CriteriaQuery<?> arg1,
-          CriteriaBuilder cb) {
-        return cb.like(root.get("id").as(String.class), "%" + id + "%");
-      }
-    };
-  }
-
-  public static Specification<Employee> filterByBirthdate(Date birthdate) {
-    return new Specification<Employee>() {
-      @Override
-      public Predicate toPredicate(Root<Employee> root, CriteriaQuery<?> arg1,
-          CriteriaBuilder cb) {
-        return cb.like(root.get("birthdate").as(String.class),
-            "%" + birthdate + "%");
-      }
-    };
   }
 }
