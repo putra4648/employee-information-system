@@ -68,8 +68,8 @@
         </div>
         <div class="row align-items-center">
           <div class="col-11">
-            <button id="searchBtn" type="submit" class="btn btn-primary">Search</button>
-            <button id='resetBtn' type="reset" class="btn btn-danger">Reset</button>
+            <button id="searchBtn" onclick="searchEmployee()" type="submit" class="btn btn-primary">Search</button>
+            <button id='resetBtn' onclick="resetAllFilter()" type="reset" class="btn btn-danger">Reset</button>
           </div>
           <div class="col">
             <button type="button" class="btn btn-lg" id="collapseBtn" onclick="showCollapse()">
@@ -92,79 +92,28 @@
       </thead>
     </table>
   </div>
+
   <script>
-    let EmployeeTable;
+    let searchCollapse = new bootstrap.Collapse("#searchCollapse", {
+      toggle: false
+    })
 
     $(document).ready(function () {
       tempusDominus.extend(tempusDominus.plugins.moment_parse, 'DD-MMM-yyyy');
       initDate("employee_birthdate");
       initDate("employee_hiredate");
       $(document).find("input").val('')
-      EmployeeTable = new DataTable("#employeeTable", {
-        responsive: true,
-        ajax: {
-          url: '/api/v1/employees',
-          method: "POST",
-          data: function (params) {
-            const filterEmployeeParams = {
-              employee_id: $("input[name='employee_id']").val(),
-              employee_fullname: $("input[name='employee_fullname']").val(),
-              employee_birthdate: $("input[name='employee_birthdate']").val(),
-              employee_hiredate: $("input[name='employee_hiredate']").val()
-            }
-
-            const sortby = params.columns[params.order[0].column]
-            const dir = params.order[0].dir
-            const filterParams = {
-              page: params.start,
-              size: params.length,
-              sortBy: sortby.data,
-              dir: dir,
-              employee_filter: JSON.stringify(filterEmployeeParams),
-            }
-            return filterParams;
-          },
-          dataSrc: function (json) {
-            return json.data;
-          }
-        },
-        processing: true,
-        serverSide: true,
-        paging: true,
-        searching: false,
-        columns: [
-          {
-            data: "id",
-          },
-          {
-            data: 'fullname'
-          },
-          {
-            data: "birthdate",
-            render: function (data) {
-              return formatTimestampToDate(data)
-            }
-          },
-          {
-            data: 'hiredate',
-            render: function (data) {
-              return formatTimestampToDate(data)
-            }
-          }
-        ],
-        dom: "<'float-end'l>" + 'rtip'
+      searchCollapse = new bootstrap.Collapse("#searchCollapse", {
+        toggle: false
       })
+      searchCollapse.show()
     })
-
-    const searchCollapse = new bootstrap.Collapse("#searchCollapse", {
-      toggle: false
-    })
-
 
     function showCollapse() {
       searchCollapse.show()
     }
 
+    // Listener
     $("#searchCollapse").on("shown.bs.collapse", function () {
       $("#collapseBtn").find("span").html(`<i class='fa-solid fa-arrow-up'></i>`)
       $("#collapseBtn").click(function () {
@@ -179,17 +128,18 @@
       })
     })
 
-    $("#searchBtn").on('click', function () {
-      EmployeeTable.ajax.reload()
-    })
 
-    $("#resetBtn").on('click', function () {
+    function resetAllFilter() {
       $("#searchForm").find('input').val("");
-      EmployeeTable.ajax.reload();
-    })
+    }
 
-    function formatTimestampToDate(time) {
-      return moment(time).format("DD MMMM YYYY");
+    function resetEmployee() {
+      resetAllFilter()
+      searchEmployee()
+    }
+
+    function searchEmployee() {
+      EmployeeTable.ajax.reload()
     }
 
     function initDate(elementId = "") {
@@ -210,11 +160,10 @@
         },
         viewDate: new Date()
       })
-
     }
-
   </script>
-  <script type="text/javascript" th:src="@{/js/index.js}"></script>
+  <script type="text/javascript" th:src="@{/js/employee.table.js}"></script>
+  <script type='text/javascript' th:src="@{/js/utils.js}"></script>
 </body>
 
 </html>
