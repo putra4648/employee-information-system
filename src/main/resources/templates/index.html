@@ -19,6 +19,15 @@
   <!--Moment JS-->
   <script th:src='@{/webjars/momentjs/min/moment.min.js}'></script>
   <script th:src='@{/webjars/momentjs/min/moment-with-locales.min.js}'></script>
+
+  <!-- Popper js-->
+  <script th:src='@{/webjars/popperjs__core/dist/umd/popper.min.js}'>    </script>
+
+  <!-- Datepicker -->
+  <script th:src='@{/webjars/eonasdan__tempus-dominus/dist/js/tempus-dominus.min.js}'></script>
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/eonasdan__tempus-dominus/dist/css/tempus-dominus.min.css}">
+  <script th:src='@{/webjars/eonasdan__tempus-dominus/dist/plugins/moment-parse.js}'></script>
+
 </head>
 
 <body>
@@ -39,11 +48,21 @@
           <div class="row">
             <div class="col">
               <label for="employee_birthdate" class="form-label">Birthday Date</label>
-              <input type="date" name="employee_birthdate" class="form-control">
+              <div class="input-group date" id="employee_birthdate">
+                <input type="text" name="employee_birthdate" class="form-control datetimepicker-input">
+                <div class="input-group-text">
+                  <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+                </div>
+              </div>
             </div>
             <div class="col">
               <label for="employee_hiredate" class="form-label">Hire Date</label>
-              <input type="date" name="employee_hiredate" class="form-control">
+              <div class="input-group date" id="employee_hiredate">
+                <input type="text" name="employee_hiredate" class="form-control">
+                <div class="input-group-text">
+                  <i class="fa-regular fa-calendar" aria-hidden="true"></i>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -77,7 +96,9 @@
     let EmployeeTable;
 
     $(document).ready(function () {
-      console.log(moment().format('DD-MMM-YYYY'))
+      tempusDominus.extend(tempusDominus.plugins.moment_parse, 'DD-MMM-yyyy');
+      initDate("employee_birthdate");
+      initDate("employee_hiredate");
       $(document).find("input").val('')
       EmployeeTable = new DataTable("#employeeTable", {
         responsive: true,
@@ -85,20 +106,23 @@
           url: '/api/v1/employees',
           method: "POST",
           data: function (params) {
-            var filterParams = {
+            const filterEmployeeParams = {
               employee_id: $("input[name='employee_id']").val(),
               employee_fullname: $("input[name='employee_fullname']").val(),
               employee_birthdate: $("input[name='employee_birthdate']").val(),
               employee_hiredate: $("input[name='employee_hiredate']").val()
             }
 
-            var data = {
+            const sortby = params.columns[params.order[0].column]
+            const dir = params.order[0].dir
+            const filterParams = {
               page: params.start,
               size: params.length,
-              employee_filter: JSON.stringify(filterParams),
+              sortBy: sortby.data,
+              dir: dir,
+              employee_filter: JSON.stringify(filterEmployeeParams),
             }
-
-            return data;
+            return filterParams;
           },
           dataSrc: function (json) {
             return json.data;
@@ -165,7 +189,28 @@
     })
 
     function formatTimestampToDate(time) {
-      return moment(time).format("DD-MMM-YYYY");
+      return moment(time).format("DD MMMM YYYY");
+    }
+
+    function initDate(elementId = "") {
+      new tempusDominus.TempusDominus(document.getElementById(elementId), {
+        display: {
+          components: {
+            calendar: true,
+            date: true,
+            hours: false,
+            minutes: false,
+            seconds: false,
+          },
+          buttons: {
+            today: true,
+            clear: true,
+            close: true,
+          }
+        },
+        viewDate: new Date()
+      })
+
     }
 
   </script>

@@ -33,11 +33,11 @@ public class Employee {
 
   @Column(name = "hire_date", nullable = false)
   @Temporal(TemporalType.DATE)
-  private Date hireDate;
+  private Date hiredate;
 
   @Column(name = "birth_date", nullable = false)
   @Temporal(TemporalType.DATE)
-  private Date birthDate;
+  private Date birthdate;
 
   /* Custom Formula */
   @Formula("CONCAT(first_name, ' ', last_name)")
@@ -80,20 +80,20 @@ public class Employee {
     this.gender = gender;
   }
 
-  public Date getHireDate() {
-    return hireDate;
+  public Date getHiredate() {
+    return hiredate;
   }
 
-  public void setHireDate(Date hireDate) {
-    this.hireDate = hireDate;
+  public void setHiredate(Date hireDate) {
+    this.hiredate = hireDate;
   }
 
-  public Date getBirthDate() {
-    return birthDate;
+  public Date getBirthdate() {
+    return birthdate;
   }
 
-  public void setBirthDate(Date birthDate) {
-    this.birthDate = birthDate;
+  public void setBirthdate(Date birthDate) {
+    this.birthdate = birthDate;
   }
 
   public List<Title> getTitles() {

@@ -20,11 +20,12 @@ public class EmployeeController {
   @PostMapping("/employees")
   @ResponseBody
   public ResponseEntity<?> getAllEmployee(
-      @RequestParam(name = "sortBy", defaultValue = "fullname") String sortBy,
+      @RequestParam(name = "sortBy", required = false) String sortBy,
+      @RequestParam(name = "dir", required = false) String direction,
       @RequestParam(name = "page", defaultValue = "1") int page,
       @RequestParam(name = "size", defaultValue = "25") int size,
       @RequestParam(name = "employee_filter", required = false) String filter) {
-    return service.getAll(filter, sortBy, page, size);
+    return service.getAll(filter, sortBy, direction, page, size);
   }
 
   @GetMapping("/employees/{id}")

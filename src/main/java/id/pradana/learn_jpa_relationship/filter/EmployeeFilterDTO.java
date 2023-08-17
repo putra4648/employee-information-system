@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 
-public class EmployeeFilter {
+public class EmployeeFilterDTO {
   @Override
   public String toString() {
-    return "EmployeeFilter [id=" + id + ", fullname=" + fullname +
+    return "EmployeeFilterDTO [id=" + id + ", fullname=" + fullname +
         ", birthdate=" + birthdate + ", hiredate=" + hiredate + "]";
   }
 
@@ -18,12 +18,11 @@ public class EmployeeFilter {
   private String fullname;
 
   @JsonProperty("employee_birthdate")
-  @JsonFormat(pattern = "dd-MM-yyyy")
+  @JsonFormat(pattern = "dd-MMM-yyyy")
   private Date birthdate;
 
   @JsonProperty("employee_hiredate")
-
-  @JsonFormat(pattern = "dd-MM-yyyy")
+  @JsonFormat(pattern = "dd-MMM-yyyy")
   private Date hiredate;
 
   public String getId() {

@@ -89,6 +89,21 @@
 			<artifactId>momentjs</artifactId>
 			<version>2.29.4</version>
 		</dependency>
+
+		<!-- datepicker -->
+		<dependency>
+			<groupId>org.webjars.npm</groupId>
+			<artifactId>eonasdan__tempus-dominus</artifactId>
+			<version>6.7.11</version>
+		</dependency>
+
+		<!-- popper js -->
+		<dependency>
+			<groupId>org.webjars.npm</groupId>
+			<artifactId>popperjs__core</artifactId>
+			<version>2.11.8</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

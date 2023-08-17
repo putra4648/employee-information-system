@@ -3,10 +3,11 @@ package id.pradana.learn_jpa_relationship.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.pradana.learn_jpa_relationship.dto.EmployeeDto;
 import id.pradana.learn_jpa_relationship.dto.TitleDto;
-import id.pradana.learn_jpa_relationship.filter.EmployeeFilter;
+import id.pradana.learn_jpa_relationship.filter.EmployeeFilterDTO;
 import id.pradana.learn_jpa_relationship.filter.EmployeeSpecFilter;
 import id.pradana.learn_jpa_relationship.model.Employee;
 import id.pradana.learn_jpa_relationship.repository.EmployeeRepository;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,47 +21,41 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.util.UriUtils;
 
 @Service
 public class EmployeeService {
-
-  private static Logger logger = Logger.getAnonymousLogger();
 
   @Autowired
   private EmployeeRepository repository;
 
   public ResponseEntity<?> getAll(String filterJsonString, String sortBy,
-      int page, int size) {
+      String direction, int page, int size) {
     Map<String, Object> response;
     try {
       // Pagination
-      Pageable paging = PageRequest.of(page, size, Sort.by(sortBy));
+      Direction dir = direction.toLowerCase().equalsIgnoreCase("asc")
+          ? Direction.ASC
+          : Direction.DESC;
+      Pageable paging = PageRequest.of(page, size, Sort.by(dir, sortBy.toLowerCase()));
 
       // Filtering
       Page<EmployeeDto> pageEmployee = null;
       Specification<Employee> specFilter = null;
 
       // Param to filter
-      if (filterJsonString != null) {
-        final ObjectMapper mapper = new ObjectMapper();
-        EmployeeFilter filter = mapper.readValue(filterJsonString, EmployeeFilter.class);
+      final ObjectMapper mapper = new ObjectMapper();
+      EmployeeFilterDTO filter = mapper.readValue(filterJsonString, EmployeeFilterDTO.class);
 
-        logger.log(Level.INFO, "Filter {0}", filter);
+      specFilter = EmployeeSpecFilter.filterAll(filter);
 
-        if (filter.getId() != null) {
-          specFilter = EmployeeSpecFilter.filterById(filter.getId());
-        } else if (filter.getFullname() != null) {
-          specFilter = EmployeeSpecFilter.filterByFullname(filter.getFullname());
-        } else if (filter.getBirthdate() != null) {
-          specFilter = EmployeeSpecFilter.filterByBirthdate(filter.getBirthdate());
-        }
-      }
-
-      pageEmployee = getPageEmployee(paging, specFilter);
+      pageEmployee = getPageEmployee(specFilter, paging);
 
       response = new HashMap<>();
       response.put("data", pageEmployee.getContent());
@@ -73,14 +68,13 @@ public class EmployeeService {
     } catch (Exception e) {
       response = new HashMap<>();
       response.put("errorMessage", e.toString());
-      response.put("causedBy", e.getCause().toString());
       return new ResponseEntity<>(new TreeMap<>(response),
           HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  private Page<EmployeeDto> getPageEmployee(Pageable paging,
-      Specification<Employee> filter) {
+  private Page<EmployeeDto> getPageEmployee(Specification<Employee> filter,
+      Pageable paging) {
     return repository.findAll(filter, paging)
         .map(new Function<Employee, EmployeeDto>() {
           @Override
@@ -102,8 +96,8 @@ public class EmployeeService {
             dto.setFirstname(e.getFirstname());
             dto.setLastname(e.getLastname());
             dto.setFullname(e.getFullname());
-            dto.setBirthdate(e.getBirthDate().getTime());
-            dto.setHiredate(e.getHireDate().getTime());
+            dto.setBirthdate(e.getBirthdate().getTime());
+            dto.setHiredate(e.getHiredate().getTime());
             dto.setTitleDtos(titleDtos);
             return dto;
           }
@@ -124,8 +118,8 @@ public class EmployeeService {
         dto.setFirstname(ep.getFirstname());
         dto.setLastname(ep.getLastname());
         dto.setFullname(ep.getFullname());
-        dto.setHiredate(ep.getHireDate().getTime());
-        dto.setBirthdate(ep.getBirthDate().getTime());
+        dto.setHiredate(ep.getHiredate().getTime());
+        dto.setBirthdate(ep.getBirthdate().getTime());
 
         List<TitleDto> titleDtos = ep.getTitles()
             .stream()
@@ -153,7 +147,6 @@ public class EmployeeService {
     } catch (Exception e) {
       response = new HashMap<>();
       response.put("errorMessage", e.toString());
-      response.put("causedBy", e.getCause().toString());
       return new ResponseEntity<>(new TreeMap<>(response),
           HttpStatus.INTERNAL_SERVER_ERROR);
     }
