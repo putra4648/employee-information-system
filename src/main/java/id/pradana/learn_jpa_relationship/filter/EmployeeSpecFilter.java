@@ -6,7 +6,6 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.springframework.data.jpa.domain.Specification;
 
 public class EmployeeSpecFilter {
