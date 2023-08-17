@@ -15,6 +15,10 @@
   <!-- Datatables -->
   <link th:rel="stylesheet" th:href="@{/webjars/datatables/css/jquery.dataTables.css}">
   <script th:src="@{/webjars/datatables/js/jquery.dataTables.js}"></script>
+
+  <!--Moment JS-->
+  <script th:src='@{/webjars/momentjs/min/moment.min.js}'></script>
+  <script th:src='@{/webjars/momentjs/min/moment-with-locales.min.js}'></script>
 </head>
 
 <body>
@@ -68,14 +72,12 @@
         </tr>
       </thead>
     </table>
-
   </div>
   <script>
     let EmployeeTable;
 
-
     $(document).ready(function () {
-      console.log("Ready")
+      console.log(moment().format('DD-MMM-YYYY'))
       $(document).find("input").val('')
       EmployeeTable = new DataTable("#employeeTable", {
         responsive: true,
@@ -83,16 +85,23 @@
           url: '/api/v1/employees',
           method: "POST",
           data: function (params) {
+            var filterParams = {
+              employee_id: $("input[name='employee_id']").val(),
+              employee_fullname: $("input[name='employee_fullname']").val(),
+              employee_birthdate: $("input[name='employee_birthdate']").val(),
+              employee_hiredate: $("input[name='employee_hiredate']").val()
+            }
+
             var data = {
               page: params.start,
               size: params.length,
-              employee_fullname: $("input[name='employee_fullname']").val()
+              employee_filter: JSON.stringify(filterParams),
             }
-            console.log(params)
+
             return data;
           },
           dataSrc: function (json) {
-            return json.data
+            return json.data;
           }
         },
         processing: true,
@@ -107,16 +116,20 @@
             data: 'fullname'
           },
           {
-            data: "birthdate"
+            data: "birthdate",
+            render: function (data) {
+              return formatTimestampToDate(data)
+            }
           },
           {
-            data: 'hiredate'
+            data: 'hiredate',
+            render: function (data) {
+              return formatTimestampToDate(data)
+            }
           }
         ],
         dom: "<'float-end'l>" + 'rtip'
       })
-
-
     })
 
     const searchCollapse = new bootstrap.Collapse("#searchCollapse", {
@@ -150,6 +163,10 @@
       $("#searchForm").find('input').val("");
       EmployeeTable.ajax.reload();
     })
+
+    function formatTimestampToDate(time) {
+      return moment(time).format("DD-MMM-YYYY");
+    }
 
   </script>
   <script type="text/javascript" th:src="@{/js/index.js}"></script>

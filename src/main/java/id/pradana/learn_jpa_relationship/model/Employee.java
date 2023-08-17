@@ -48,23 +48,6 @@ public class Employee {
   @OrderBy(value = "from_date")
   private List<Title> titles;
 
-  public static Employee from(String id, String fullname, Date birthDate,
-      Date hiredate) {
-    return new Employee(id, fullname, birthDate, hiredate);
-  }
-
-  public Employee() {
-  };
-
-  private Employee(String id, String fullname, Date birthdate, Date hiredate) {
-    if (id != null) {
-      this.id = new Integer(id);
-    }
-    this.fullname = fullname;
-    this.birthDate = birthdate;
-    this.hireDate = hiredate;
-  }
-
   public Integer getId() {
     return id;
   }

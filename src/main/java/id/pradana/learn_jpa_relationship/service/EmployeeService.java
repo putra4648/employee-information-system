@@ -1,69 +1,70 @@
 package id.pradana.learn_jpa_relationship.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import id.pradana.learn_jpa_relationship.dto.EmployeeDto;
 import id.pradana.learn_jpa_relationship.dto.TitleDto;
+import id.pradana.learn_jpa_relationship.filter.EmployeeFilter;
 import id.pradana.learn_jpa_relationship.model.Employee;
 import id.pradana.learn_jpa_relationship.repository.EmployeeRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
 public class EmployeeService {
+
+  private static Logger logger = Logger.getAnonymousLogger();
+
   @Autowired
   private EmployeeRepository repository;
 
-  public ResponseEntity<?> getAll(String fullname, String sortBy, int page,
-      int size) {
+  public ResponseEntity<?> getAll(String filterJsonString, String sortBy,
+      int page, int size) {
     Map<String, Object> response;
     try {
       // Pagination
       Pageable paging = PageRequest.of(page, size, Sort.by(sortBy));
-      ExampleMatcher customMatcher = ExampleMatcher.matchingAny().withMatcher(
-          "fullname",
-          ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
-      Example<Employee> example = Example.of(Employee.from(null, fullname, null, null), customMatcher);
-      Page<EmployeeDto> pageEmployee = repository.findAll(example, paging)
-          .map(new Function<Employee, EmployeeDto>() {
-            @Override
-            public EmployeeDto apply(Employee e) {
-              EmployeeDto dto = new EmployeeDto();
-              List<TitleDto> titleDtos = e.getTitles()
-                  .stream()
-                  .map(d -> {
-                    TitleDto titleDto = new TitleDto();
-                    titleDto.setEmployeeNo(
-                        d.getTitlePk().getEmployeeNo());
-                    titleDto.setTitle(d.getTitlePk().getTitle());
-                    titleDto.setFromDate(d.getTitlePk().getFromDate());
-                    titleDto.setToDate(d.getToDate());
-                    return titleDto;
-                  })
-                  .toList();
 
-              dto.setId(e.getId().longValue());
-              dto.setFirstname(e.getFirstname());
-              dto.setLastname(e.getLastname());
-              dto.setFullname(e.getFullname());
-              dto.setBirthdate(e.getBirthDate());
-              dto.setHiredate(e.getHireDate());
-              dto.setTitleDtos(titleDtos);
-              return dto;
-            }
-          });
+      // Filtering
+      Page<EmployeeDto> pageEmployee = null;
+      Specification<Employee> specFilter = null;
+
+      // Param to filter
+      if (filterJsonString != null) {
+        final ObjectMapper mapper = new ObjectMapper();
+        EmployeeFilter filter = mapper.readValue(filterJsonString, EmployeeFilter.class);
+
+        logger.log(Level.INFO, "Filter {0}", filter);
+
+        if (filter.getId() != null) {
+          specFilter = filterById(filter.getId());
+        } else if (filter.getFullname() != null) {
+          specFilter = filterByFullname(filter.getFullname());
+        } else if (filter.getBirthdate() != null) {
+          specFilter = filterByBirthdate(filter.getBirthdate());
+        }
+      }
+
+      pageEmployee = getPageEmployee(paging, specFilter);
 
       response = new HashMap<>();
       response.put("data", pageEmployee.getContent());
@@ -76,50 +77,120 @@ public class EmployeeService {
     } catch (Exception e) {
       response = new HashMap<>();
       response.put("errorMessage", e.toString());
+      response.put("causedBy", e.getCause().toString());
       return new ResponseEntity<>(new TreeMap<>(response),
           HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
+  private Page<EmployeeDto> getPageEmployee(Pageable paging,
+      Specification<Employee> filter) {
+    return repository.findAll(filter, paging)
+        .map(new Function<Employee, EmployeeDto>() {
+          @Override
+          public EmployeeDto apply(Employee e) {
+            EmployeeDto dto = new EmployeeDto();
+            List<TitleDto> titleDtos = e.getTitles()
+                .stream()
+                .map(d -> {
+                  TitleDto titleDto = new TitleDto();
+                  titleDto.setEmployeeNo(d.getTitlePk().getEmployeeNo());
+                  titleDto.setTitle(d.getTitlePk().getTitle());
+                  titleDto.setFromDate(d.getTitlePk().getFromDate());
+                  titleDto.setToDate(d.getToDate());
+                  return titleDto;
+                })
+                .toList();
+
+            dto.setId(e.getId().longValue());
+            dto.setFirstname(e.getFirstname());
+            dto.setLastname(e.getLastname());
+            dto.setFullname(e.getFullname());
+            dto.setBirthdate(e.getBirthDate().getTime());
+            dto.setHiredate(e.getHireDate().getTime());
+            dto.setTitleDtos(titleDtos);
+            return dto;
+          }
+        });
+  }
+
   public ResponseEntity<?> getEmployeeById(Integer id) {
     Optional<Employee> emp = repository.findById(id);
     Map<String, Object> response;
+    try {
+      if (emp.isPresent()) {
+        response = new HashMap<>();
+        Employee ep = emp.get();
 
-    if (emp.isPresent()) {
+        EmployeeDto dto = new EmployeeDto();
+
+        dto.setId(ep.getId().longValue());
+        dto.setFirstname(ep.getFirstname());
+        dto.setLastname(ep.getLastname());
+        dto.setFullname(ep.getFullname());
+        dto.setHiredate(ep.getHireDate().getTime());
+        dto.setBirthdate(ep.getBirthDate().getTime());
+
+        List<TitleDto> titleDtos = ep.getTitles()
+            .stream()
+            .map(d -> {
+              TitleDto titleDto = new TitleDto();
+              titleDto.setEmployeeNo(d.getTitlePk().getEmployeeNo());
+              titleDto.setTitle(d.getTitlePk().getTitle());
+              titleDto.setFromDate(d.getTitlePk().getFromDate());
+              titleDto.setToDate(d.getToDate());
+              return titleDto;
+            })
+            .toList();
+
+        dto.setTitleDtos(titleDtos);
+
+        response.put("errorMessage", null);
+        response.put("data", dto);
+        return new ResponseEntity<>(new TreeMap<>(response), HttpStatus.OK);
+      } else {
+        response = new HashMap<>();
+        response.put("errorMessage", "No Employee available with id " + id);
+        response.put("data", null);
+        return new ResponseEntity<>(new TreeMap<>(response), HttpStatus.OK);
+      }
+    } catch (Exception e) {
       response = new HashMap<>();
-      Employee ep = emp.get();
-
-      EmployeeDto dto = new EmployeeDto();
-
-      dto.setId(ep.getId().longValue());
-      dto.setFirstname(ep.getFirstname());
-      dto.setLastname(ep.getLastname());
-      dto.setFullname(ep.getFullname());
-      dto.setHiredate(ep.getHireDate());
-      dto.setBirthdate(ep.getBirthDate());
-
-      List<TitleDto> titleDtos = ep.getTitles()
-          .stream()
-          .map(d -> {
-            TitleDto titleDto = new TitleDto();
-            titleDto.setEmployeeNo(d.getTitlePk().getEmployeeNo());
-            titleDto.setTitle(d.getTitlePk().getTitle());
-            titleDto.setFromDate(d.getTitlePk().getFromDate());
-            titleDto.setToDate(d.getToDate());
-            return titleDto;
-          })
-          .toList();
-
-      dto.setTitleDtos(titleDtos);
-
-      response.put("errorMessage", null);
-      response.put("data", dto);
-      return new ResponseEntity<>(new TreeMap<>(response), HttpStatus.OK);
-    } else {
-      response = new HashMap<>();
-      response.put("errorMessage", "No Employee available with id " + id);
-      response.put("data", null);
-      return new ResponseEntity<>(new TreeMap<>(response), HttpStatus.OK);
+      response.put("errorMessage", e.toString());
+      response.put("causedBy", e.getCause().toString());
+      return new ResponseEntity<>(new TreeMap<>(response),
+          HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  public static Specification<Employee> filterByFullname(String fullname) {
+    return new Specification<Employee>() {
+      @Override
+      public Predicate toPredicate(Root<Employee> root, CriteriaQuery<?> rc,
+          CriteriaBuilder cb) {
+        return cb.like(root.get("fullname"), "%" + fullname + "%");
+      }
+    };
+  }
+
+  public static Specification<Employee> filterById(String id) {
+    return new Specification<Employee>() {
+      @Override
+      public Predicate toPredicate(Root<Employee> root, CriteriaQuery<?> arg1,
+          CriteriaBuilder cb) {
+        return cb.like(root.get("id").as(String.class), "%" + id + "%");
+      }
+    };
+  }
+
+  public static Specification<Employee> filterByBirthdate(Date birthdate) {
+    return new Specification<Employee>() {
+      @Override
+      public Predicate toPredicate(Root<Employee> root, CriteriaQuery<?> arg1,
+          CriteriaBuilder cb) {
+        return cb.like(root.get("birthdate").as(String.class),
+            "%" + birthdate + "%");
+      }
+    };
   }
 }

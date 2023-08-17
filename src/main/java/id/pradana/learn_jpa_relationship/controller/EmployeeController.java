@@ -1,7 +1,6 @@
 package id.pradana.learn_jpa_relationship.controller;
 
 import id.pradana.learn_jpa_relationship.service.EmployeeService;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -24,8 +23,8 @@ public class EmployeeController {
       @RequestParam(name = "sortBy", defaultValue = "fullname") String sortBy,
       @RequestParam(name = "page", defaultValue = "1") int page,
       @RequestParam(name = "size", defaultValue = "25") int size,
-      @RequestParam(name = "employee_fullname", defaultValue = "") String fullname) {
-    return service.getAll(fullname, sortBy, page, size);
+      @RequestParam(name = "employee_filter", required = false) String filter) {
+    return service.getAll(filter, sortBy, page, size);
   }
 
   @GetMapping("/employees/{id}")
