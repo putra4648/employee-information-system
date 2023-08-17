@@ -52,5 +52,3 @@ let EmployeeTable = new DataTable("#employeeTable", {
   ],
   dom: "<'float-end'l>" + 'rtip'
 })
-
-

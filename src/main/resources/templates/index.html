@@ -69,7 +69,7 @@
         <div class="row align-items-center">
           <div class="col-11">
             <button id="searchBtn" onclick="searchEmployee()" type="submit" class="btn btn-primary">Search</button>
-            <button id='resetBtn' onclick="resetAllFilter()" type="reset" class="btn btn-danger">Reset</button>
+            <button id='resetBtn' onclick="resetEmployee()" type="reset" class="btn btn-danger">Reset</button>
           </div>
           <div class="col">
             <button type="button" class="btn btn-lg" id="collapseBtn" onclick="showCollapse()">
@@ -135,7 +135,7 @@
 
     function resetEmployee() {
       resetAllFilter()
-      searchEmployee()
+      EmployeeTable.clear().draw();
     }
 
     function searchEmployee() {
