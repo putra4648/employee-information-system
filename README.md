@@ -19,5 +19,8 @@ To know `Database Relationship` go there :  <https://www.metabase.com/learn/data
 - [x] Font Awesome
 - [x] Momentjs
 - [x] Datepicker
-- [x] Filter by search Employee
+- [x] Filter by search in Employee form 
 - [x] Sort filter ASC/DESC Employee form
+- [ ] Add detail for employee
+- [ ] Export data to excel / pdf
+- [ ] Add list department 
