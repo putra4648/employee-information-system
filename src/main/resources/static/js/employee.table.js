@@ -48,6 +48,18 @@ let EmployeeTable = new DataTable("#employeeTable", {
       render: function(data) {
         return formatTimestampToDate(data)
       }
+    },
+    {
+      data: null,
+    },
+  ],
+  columnDefs: [
+    {
+      targets: 4,
+      sortable: false,
+      render: function(data, type, row, meta) {
+        return "<a href='/detail' class='btn'>Detail</a>";
+      }
     }
   ],
   dom: "<'float-end'l>" + 'rtip'

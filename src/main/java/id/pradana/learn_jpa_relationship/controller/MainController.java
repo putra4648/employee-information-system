@@ -12,4 +12,9 @@ public class MainController {
   public ModelAndView main(ModelMap model) {
     return new ModelAndView("index", model);
   }
+
+  @GetMapping("/detail")
+  public ModelAndView detailPage(ModelMap model) {
+    return new ModelAndView("detail", model);
+  }
 }
