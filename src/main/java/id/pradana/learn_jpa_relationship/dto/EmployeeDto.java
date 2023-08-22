@@ -13,6 +13,8 @@ public class EmployeeDto {
   private Long hiredate;
   @JsonProperty(value = "titles")
   private List<TitleDto> titleDtos;
+  @JsonProperty(value = "salaries")
+  private List<SalaryDto> salaryDtos;
 
   public Long getId() {
     return id;
@@ -68,5 +70,13 @@ public class EmployeeDto {
 
   public void setHiredate(Long hiredate) {
     this.hiredate = hiredate;
+  }
+
+  public List<SalaryDto> getSalaryDtos() {
+    return salaryDtos;
+  }
+
+  public void setSalaryDtos(List<SalaryDto> salaryDtos) {
+    this.salaryDtos = salaryDtos;
   }
 }

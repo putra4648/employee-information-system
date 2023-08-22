@@ -2,6 +2,7 @@ package id.pradana.learn_jpa_relationship.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import id.pradana.learn_jpa_relationship.dto.EmployeeDto;
+import id.pradana.learn_jpa_relationship.dto.SalaryDto;
 import id.pradana.learn_jpa_relationship.dto.TitleDto;
 import id.pradana.learn_jpa_relationship.filter.EmployeeFilterDTO;
 import id.pradana.learn_jpa_relationship.filter.EmployeeSpecFilter;
@@ -73,27 +74,45 @@ public class EmployeeService {
     return repository.findAll(filter, paging)
         .map(new Function<Employee, EmployeeDto>() {
           @Override
-          public EmployeeDto apply(Employee e) {
+          public EmployeeDto apply(Employee emp) {
             EmployeeDto dto = new EmployeeDto();
-            List<TitleDto> titleDtos = e.getTitles()
+            // Set title
+            List<TitleDto> titleDtos = emp.getTitles()
                 .stream()
-                .map(d -> {
+                .map(t -> {
                   TitleDto titleDto = new TitleDto();
-                  titleDto.setEmployeeNo(d.getEmployeeNo());
-                  titleDto.setTitle(d.getTitle());
-                  titleDto.setFromDate(d.getFromDate());
-                  titleDto.setToDate(d.getToDate());
+                  titleDto.setEmployeeNo(t.getEmployeeNo());
+                  titleDto.setTitle(t.getTitle());
+                  titleDto.setFromDate(t.getFromDate().getTime());
+                  titleDto.setToDate(t.getToDate().getTime());
                   return titleDto;
                 })
                 .toList();
 
-            dto.setId(e.getId().longValue());
-            dto.setFirstname(e.getFirstname());
-            dto.setLastname(e.getLastname());
-            dto.setFullname(e.getFullname());
-            dto.setBirthdate(e.getBirthdate().getTime());
-            dto.setHiredate(e.getHiredate().getTime());
             dto.setTitleDtos(titleDtos);
+
+            // Set employee
+            dto.setId(emp.getId().longValue());
+            dto.setFirstname(emp.getFirstname());
+            dto.setLastname(emp.getLastname());
+            dto.setFullname(emp.getFullname());
+            dto.setBirthdate(emp.getBirthdate().getTime());
+            dto.setHiredate(emp.getHiredate().getTime());
+
+            // Set salaries
+            List<SalaryDto> salariesDto = emp.getSalaries()
+                .stream()
+                .map(sal -> {
+                  SalaryDto salaryDto = new SalaryDto();
+                  salaryDto.setEmpNo(sal.getEmpNo());
+                  salaryDto.setSalary(sal.getSalary());
+                  salaryDto.setFromDate(sal.getFromDate().getTime());
+                  salaryDto.setToDate(sal.getToDate().getTime());
+                  return salaryDto;
+                })
+                .toList();
+            dto.setSalaryDtos(salariesDto);
+
             return dto;
           }
         });
@@ -122,8 +141,8 @@ public class EmployeeService {
               TitleDto titleDto = new TitleDto();
               titleDto.setEmployeeNo(d.getEmployeeNo());
               titleDto.setTitle(d.getTitle());
-              titleDto.setFromDate(d.getFromDate());
-              titleDto.setToDate(d.getToDate());
+              titleDto.setFromDate(d.getFromDate().getTime());
+              titleDto.setToDate(d.getToDate().getTime());
               return titleDto;
             })
             .toList();
