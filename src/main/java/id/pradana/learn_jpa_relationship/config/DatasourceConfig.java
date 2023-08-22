@@ -24,7 +24,7 @@ public class DatasourceConfig {
   public DataSource dataSource() {
     DataSourceBuilder builder = DataSourceBuilder.create();
     builder.driverClassName("com.mysql.cj.jdbc.Driver");
-    builder.url(url);
+    builder.url("jdbc:" + url);
     builder.username(username);
     builder.password(password);
     return builder.build();
