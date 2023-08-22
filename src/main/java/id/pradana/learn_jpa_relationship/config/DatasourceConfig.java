@@ -21,7 +21,7 @@ public class DatasourceConfig {
   private String password;
 
   @Bean
-  public DataSource getDataSource() {
+  public DataSource dataSource() {
     DataSourceBuilder builder = DataSourceBuilder.create();
     builder.driverClassName("com.mysql.cj.jdbc.Driver");
     builder.url(url);
