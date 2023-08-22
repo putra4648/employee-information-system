@@ -6,13 +6,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinColumns;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import org.hibernate.annotations.Formula;
 
 @Entity
@@ -47,6 +50,10 @@ public class Employee {
   @JoinColumns({ @JoinColumn(name = "emp_no"), })
   @OrderBy(value = "from_date")
   private List<Title> titles;
+
+  @OneToMany(cascade = CascadeType.ALL)
+  @JoinColumns({ @JoinColumn(name = "emp_no") })
+  private Set<Salary> salaries;
 
   public Long getId() {
     return id;
@@ -110,5 +117,13 @@ public class Employee {
 
   public void setFullname(String fullname) {
     this.fullname = fullname;
+  }
+
+  public Set<Salary> getSalaries() {
+    return salaries;
+  }
+
+  public void setSalaries(Set<Salary> salaries) {
+    this.salaries = salaries;
   }
 }
