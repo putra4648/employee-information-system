@@ -6,10 +6,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <!-- Bootstrap -->
   <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+  <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+
+  <!-- Font Awesome -->
   <link th:rel="stylesheet" th:href="@{/webjars/font-awesome/css/all.min.css}" />
 
-  <script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+  <!-- jQuery -->
   <script th:src="@{/webjars/jquery/jquery.min.js}"></script>
 
   <!-- Datatables -->
@@ -81,13 +85,14 @@
         </div>
       </div>
     </div>
-    <table id="employeeTable" class="display">
+    <table id="employeeTable" class="display" style="width: 100%;">
       <thead>
         <tr>
           <th>ID</th>
           <th>Fullname</th>
           <th>Birthday Date</th>
           <th>Hire Date</th>
+          <th>Detail</th>
         </tr>
       </thead>
     </table>
