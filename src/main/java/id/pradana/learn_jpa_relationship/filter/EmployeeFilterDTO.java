@@ -3,15 +3,11 @@ package id.pradana.learn_jpa_relationship.filter;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmployeeFilterDTO {
-  @Override
-  public String toString() {
-    return "EmployeeFilterDTO [id=" + id + ", fullname=" + fullname +
-        ", birthdate=" + birthdate + ", hiredate=" + hiredate + "]";
-  }
-
   @JsonProperty("employee_id")
   private String id;
 

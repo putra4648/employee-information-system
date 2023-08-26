@@ -23,7 +23,7 @@ public class DepartmentEmployeeService {
   @Autowired
   private DepartmentEmployeeRepository repository;
 
-  public ResponseEntity<?> getAll(String sortBy, String direction, int page,
+  public ResponseEntity<Map<String, Object>> getAll(String sortBy, String direction, int page,
       int size) {
 
     Map<String, Object> response = null;
