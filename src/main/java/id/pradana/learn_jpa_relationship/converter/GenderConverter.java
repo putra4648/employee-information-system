@@ -1,9 +1,10 @@
 package id.pradana.learn_jpa_relationship.converter;
 
+import java.util.stream.Stream;
+
 import id.pradana.learn_jpa_relationship.model.Gender;
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
-import java.util.stream.Stream;
 
 /**
  * This is class is used to convert Gender enumeration from table definition

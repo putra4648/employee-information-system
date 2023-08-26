@@ -1,7 +1,8 @@
 package id.pradana.learn_jpa_relationship.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class EmployeeDto {
   private Long id;

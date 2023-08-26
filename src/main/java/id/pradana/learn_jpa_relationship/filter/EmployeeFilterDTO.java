@@ -1,8 +1,9 @@
 package id.pradana.learn_jpa_relationship.filter;
 
+import java.util.Date;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.Date;
 
 public class EmployeeFilterDTO {
   @Override
