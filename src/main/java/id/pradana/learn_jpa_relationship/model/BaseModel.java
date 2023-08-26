@@ -1,10 +1,11 @@
 package id.pradana.learn_jpa_relationship.model;
 
+import java.util.Date;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
-import java.util.Date;
 
 @MappedSuperclass
 public class BaseModel {

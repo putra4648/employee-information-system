@@ -1,12 +1,14 @@
 package id.pradana.learn_jpa_relationship.filter;
 
+import java.text.SimpleDateFormat;
+
+import org.springframework.data.jpa.domain.Specification;
+
 import id.pradana.learn_jpa_relationship.model.Employee;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import java.text.SimpleDateFormat;
-import org.springframework.data.jpa.domain.Specification;
 
 public class EmployeeSpecFilter {
 
