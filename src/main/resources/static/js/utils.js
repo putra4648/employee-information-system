@@ -1,3 +1,3 @@
 function formatTimestampToDate(time) {
-  return moment(time).format("DD-Mon-YYYY");
+  return moment(time).format("DD-MMM-YYYY");
 }
