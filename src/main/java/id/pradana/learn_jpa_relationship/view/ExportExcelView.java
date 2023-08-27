@@ -1,12 +1,14 @@
 
 package id.pradana.learn_jpa_relationship.view;
 
+import id.pradana.learn_jpa_relationship.dto.EmployeeDto;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -16,21 +18,20 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.springframework.web.servlet.view.AbstractView;
 
-import id.pradana.learn_jpa_relationship.dto.EmployeeDto;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
 public class ExportExcelView extends AbstractView {
 
     @Override
-    protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
-            HttpServletResponse response) throws Exception {
+    protected void renderMergedOutputModel(Map<String, Object> model,
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy");
 
         SXSSFWorkbook workbook = new SXSSFWorkbook();
 
         List<EmployeeDto> employees = (List<EmployeeDto>) model.get("employees");
-        List<String> columnNames = Arrays.asList("Employee ID", "Employee Name", "Hiring Date", "Work From Date");
+        List<String> columnNames = Arrays.asList("Employee ID", "Employee Name",
+                "Hiring Date", "Work From Date");
 
         SXSSFSheet sheet = workbook.createSheet("List Employees");
 
@@ -88,8 +89,10 @@ public class ExportExcelView extends AbstractView {
 
         SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd_HH:mm:ss");
         String currentDateTime = dateFormatter.format(new Date());
+        String filename = "List Employee " + currentDateTime;
         response.setContentType("application/octet-stream");
-        response.setHeader("Content-Disposition", "attachment; filename=student" + currentDateTime + ".xlsx");
+        response.setHeader("Content-Disposition",
+                "attachment; filename=" + filename + ".xlsx");
         workbook.write(response.getOutputStream());
         workbook.close();
     }

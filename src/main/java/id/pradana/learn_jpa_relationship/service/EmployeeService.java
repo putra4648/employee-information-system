@@ -1,12 +1,19 @@
 package id.pradana.learn_jpa_relationship.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import id.pradana.learn_jpa_relationship.dto.EmployeeDto;
+import id.pradana.learn_jpa_relationship.dto.SalaryDto;
+import id.pradana.learn_jpa_relationship.dto.TitleDto;
+import id.pradana.learn_jpa_relationship.filter.EmployeeFilterDTO;
+import id.pradana.learn_jpa_relationship.filter.EmployeeSpecFilter;
+import id.pradana.learn_jpa_relationship.model.Employee;
+import id.pradana.learn_jpa_relationship.repository.EmployeeRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 import java.util.function.Function;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,16 +25,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import id.pradana.learn_jpa_relationship.dto.EmployeeDto;
-import id.pradana.learn_jpa_relationship.dto.SalaryDto;
-import id.pradana.learn_jpa_relationship.dto.TitleDto;
-import id.pradana.learn_jpa_relationship.filter.EmployeeFilterDTO;
-import id.pradana.learn_jpa_relationship.filter.EmployeeSpecFilter;
-import id.pradana.learn_jpa_relationship.model.Employee;
-import id.pradana.learn_jpa_relationship.repository.EmployeeRepository;
-
 @Service
 public class EmployeeService {
 
@@ -36,7 +33,7 @@ public class EmployeeService {
 
   /**
    * Get all employee with advanced filter, paging and sorting
-   * 
+   *
    * @param filterJsonString
    * @param sortBy
    * @param direction
@@ -44,8 +41,10 @@ public class EmployeeService {
    * @param size
    * @return
    */
-  public ResponseEntity<Map<String, Object>> getAll(String filterJsonString, String sortBy,
-      String direction, int page, int size) {
+  public ResponseEntity<Map<String, Object>> getAll(String filterJsonString,
+      String sortBy,
+      String direction, int page,
+      int size) {
     Map<String, Object> response;
     try {
       // Pagination
@@ -84,7 +83,7 @@ public class EmployeeService {
 
   /**
    * Get all employee data with {@link EmployeeFilterDTO} as filter
-   * 
+   *
    * @param filter
    * @return
    */
@@ -94,7 +93,8 @@ public class EmployeeService {
 
       specFilter = EmployeeSpecFilter.filterAll(filter);
 
-      List<EmployeeDto> results = repository.findAll(specFilter).stream().limit(50000)
+      List<EmployeeDto> results = repository.findAll(specFilter, PageRequest.ofSize(1000))
+          .stream()
           .map(new Function<Employee, EmployeeDto>() {
             @Override
             public EmployeeDto apply(Employee emp) {
@@ -138,7 +138,8 @@ public class EmployeeService {
 
               return dto;
             }
-          }).toList();
+          })
+          .toList();
 
       return results;
     } catch (Exception e) {
@@ -148,7 +149,7 @@ public class EmployeeService {
 
   /**
    * Get single employee data with ID
-   * 
+   *
    * @param id
    * @return
    */
@@ -248,5 +249,4 @@ public class EmployeeService {
           }
         });
   }
-
 }
