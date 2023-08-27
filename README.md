@@ -25,4 +25,4 @@ To know `Database Relationship` go there :  <https://www.metabase.com/learn/data
 - [x] Export data to excel 
   - With limitation that data only contain 50K data from 300K data
 - [ ] Add list department
-- [ ] Add salary
+- [x] Add salary
