@@ -10,10 +10,10 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>id.pradana</groupId>
-	<artifactId>learn_jpa_relationship</artifactId>
+	<artifactId>ems</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>learn_jpa_relationship</name>
-	<description>Learning JPA Relationship</description>
+	<name>employee_information_system</name>
+	<description>Employee Information System</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
