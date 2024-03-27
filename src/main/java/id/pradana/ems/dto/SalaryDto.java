@@ -19,4 +19,9 @@ public class SalaryDto extends BaseDto {
   public void setSalary(Long salary) {
     this.salary = salary;
   }
+
+  @Override
+  public String toString() {
+    return "SalaryDto [empNo=" + empNo + ", salary=" + salary + "]";
+  }
 }

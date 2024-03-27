@@ -1,6 +1,7 @@
 package id.pradana.ems.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import id.pradana.ems.model.Gender;
 import java.util.List;
 
 public class EmployeeDto {
@@ -11,12 +12,22 @@ public class EmployeeDto {
   // Convert to milisecond
   private Long birthdate;
   private Long hiredate;
+  private Gender gender;
+  private String deptname;
+
+  public String getDeptname() {
+    return deptname;
+  }
+
+  public void setDeptname(String deptname) {
+    this.deptname = deptname;
+  }
 
   @JsonProperty(value = "titles")
-  private List<TitleDto> titleDtos;
+  private List<TitleDto> titles;
 
   @JsonProperty(value = "salaries")
-  private List<SalaryDto> salaryDtos;
+  private List<SalaryDto> salaries;
 
   public Long getId() {
     return id;
@@ -40,14 +51,6 @@ public class EmployeeDto {
 
   public void setLastname(String lastname) {
     this.lastname = lastname;
-  }
-
-  public List<TitleDto> getTitleDtos() {
-    return titleDtos;
-  }
-
-  public void setTitleDtos(List<TitleDto> titleDtos) {
-    this.titleDtos = titleDtos;
   }
 
   public String getFullname() {
@@ -74,11 +77,35 @@ public class EmployeeDto {
     this.hiredate = hiredate;
   }
 
-  public List<SalaryDto> getSalaryDtos() {
-    return salaryDtos;
+  public Gender getGender() {
+    return gender;
   }
 
-  public void setSalaryDtos(List<SalaryDto> salaryDtos) {
-    this.salaryDtos = salaryDtos;
+  public void setGender(Gender gender) {
+    this.gender = gender;
+  }
+
+  public List<TitleDto> getTitles() {
+    return titles;
+  }
+
+  public void setTitles(List<TitleDto> titles) {
+    this.titles = titles;
+  }
+
+  public List<SalaryDto> getSalaries() {
+    return salaries;
+  }
+
+  public void setSalaries(List<SalaryDto> salaries) {
+    this.salaries = salaries;
+  }
+
+  @Override
+  public String toString() {
+    return "EmployeeDto [id=" + id + ", firstname=" + firstname +
+        ", fullname=" + fullname + ", birthdate=" + birthdate +
+        ", hiredate=" + hiredate + ", gender=" + gender +
+        ", titles=" + titles + ", salaries=" + salaries + "]";
   }
 }

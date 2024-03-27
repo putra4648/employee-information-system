@@ -3,7 +3,7 @@ let EmployeeTable = new DataTable("#employeeTable", {
   ajax: {
     url: "/api/v1/employees",
     method: "POST",
-    data: function (params) {
+    data: function(params) {
       const filterEmployeeParams = {
         employee_id: $("input[name='employee_id']").val(),
         employee_fullname: $("input[name='employee_fullname']").val(),
@@ -22,7 +22,7 @@ let EmployeeTable = new DataTable("#employeeTable", {
       };
       return filterParams;
     },
-    dataSrc: function (json) {
+    dataSrc: function(json) {
       return json.data;
     },
   },
@@ -39,13 +39,13 @@ let EmployeeTable = new DataTable("#employeeTable", {
     },
     {
       data: "birthdate",
-      render: function (data) {
+      render: function(data) {
         return formatTimestampToDate(data);
       },
     },
     {
       data: "hiredate",
-      render: function (data) {
+      render: function(data) {
         return formatTimestampToDate(data);
       },
     },
@@ -57,8 +57,11 @@ let EmployeeTable = new DataTable("#employeeTable", {
     {
       targets: 4,
       sortable: false,
-      render: function (data, type, row, meta) {
-        return "<a href='/detail' class='btn'>Detail</a>";
+      render: function(data, type, row, meta) {
+        return `<a href='/detail?id=${data.id}' class='btn btn-primary'>
+<i class="fa-solid fa-circle-info"></i>
+Detail
+</a>`;
       },
     },
   ],

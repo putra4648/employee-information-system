@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,7 +29,14 @@ public class MainController {
   }
 
   @GetMapping("/detail")
-  public ModelAndView detailPage(ModelMap model) {
+  public ModelAndView detailPage(@RequestParam(name = "id") String id,
+      ModelMap model) {
+
+    ResponseEntity<Map<String, Object>> response = employeeService.getEmployeeById(Long.valueOf(id));
+    if (response.getStatusCode() == HttpStatus.OK) {
+      System.out.print(response.getBody().get("data"));
+      model.put("emp", response.getBody().get("data"));
+    }
     return new ModelAndView("detail", model);
   }
 

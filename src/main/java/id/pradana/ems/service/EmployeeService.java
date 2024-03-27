@@ -7,6 +7,7 @@ import id.pradana.ems.dto.TitleDto;
 import id.pradana.ems.filter.EmployeeFilterDTO;
 import id.pradana.ems.filter.EmployeeSpecFilter;
 import id.pradana.ems.model.Employee;
+import id.pradana.ems.repository.DepartmentManagerRepository;
 import id.pradana.ems.repository.EmployeeRepository;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +30,10 @@ import org.springframework.stereotype.Service;
 public class EmployeeService {
 
   @Autowired
-  private EmployeeRepository repository;
+  private EmployeeRepository employeeRepository;
+
+  @Autowired
+  private DepartmentManagerRepository departmentManagerRepository;
 
   /**
    * Get all employee with advanced filter, paging and sorting
@@ -93,7 +97,7 @@ public class EmployeeService {
 
       specFilter = EmployeeSpecFilter.filterAll(filter);
 
-      List<EmployeeDto> results = repository.findAll(specFilter, PageRequest.ofSize(1000))
+      List<EmployeeDto> results = employeeRepository.findAll(specFilter, PageRequest.ofSize(1000))
           .stream()
           .map(new Function<Employee, EmployeeDto>() {
             @Override
@@ -112,7 +116,7 @@ public class EmployeeService {
                   })
                   .toList();
 
-              dto.setTitleDtos(titleDtos);
+              dto.setTitles(titleDtos);
 
               // Set employee
               dto.setId(emp.getId().longValue());
@@ -134,7 +138,7 @@ public class EmployeeService {
                     return salaryDto;
                   })
                   .toList();
-              dto.setSalaryDtos(salariesDto);
+              dto.setSalaries(salariesDto);
 
               return dto;
             }
@@ -154,7 +158,7 @@ public class EmployeeService {
    * @return
    */
   public ResponseEntity<Map<String, Object>> getEmployeeById(Long id) {
-    Optional<Employee> emp = repository.findById(id);
+    Optional<Employee> emp = employeeRepository.findById(id);
     Map<String, Object> response;
     try {
       if (emp.isPresent()) {
@@ -170,7 +174,7 @@ public class EmployeeService {
         dto.setHiredate(ep.getHiredate().getTime());
         dto.setBirthdate(ep.getBirthdate().getTime());
 
-        List<TitleDto> titleDtos = ep.getTitles()
+        List<TitleDto> titles = ep.getTitles()
             .stream()
             .map(d -> {
               TitleDto titleDto = new TitleDto();
@@ -182,7 +186,17 @@ public class EmployeeService {
             })
             .toList();
 
-        dto.setTitleDtos(titleDtos);
+        List<SalaryDto> salaries = ep.getSalaries()
+            .stream()
+            .map(d -> {
+              SalaryDto salaryDto = new SalaryDto();
+              salaryDto.setSalary(d.getSalary());
+              return salaryDto;
+            })
+            .toList();
+
+        dto.setTitles(titles);
+        dto.setSalaries(salaries);
 
         response.put("errorMessage", null);
         response.put("data", dto);
@@ -203,7 +217,7 @@ public class EmployeeService {
 
   private Page<EmployeeDto> getPageEmployee(Specification<Employee> filter,
       Pageable paging) {
-    return repository.findAll(filter, paging)
+    return employeeRepository.findAll(filter, paging)
         .map(new Function<Employee, EmployeeDto>() {
           @Override
           public EmployeeDto apply(Employee emp) {
@@ -221,7 +235,7 @@ public class EmployeeService {
                 })
                 .toList();
 
-            dto.setTitleDtos(titleDtos);
+            dto.setTitles(titleDtos);
 
             // Set employee
             dto.setId(emp.getId().longValue());
@@ -243,7 +257,7 @@ public class EmployeeService {
                   return salaryDto;
                 })
                 .toList();
-            dto.setSalaryDtos(salariesDto);
+            dto.setSalaries(salariesDto);
 
             return dto;
           }
