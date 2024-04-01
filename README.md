@@ -23,6 +23,6 @@ To know `Database Relationship` go there :  <https://www.metabase.com/learn/data
 - [x] Sort filter ASC/DESC Employee form
 - [x] Add detail for employee
 - [x] Export data to excel 
-  - With limitation that data only contain 50K data from 300K data
+  - With limitation that data only contain 1K (as for now) from 300K data
 - [x] Add list department
 - [x] Add salary
